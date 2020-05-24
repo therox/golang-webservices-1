@@ -215,10 +215,11 @@ func TestLogging(t *testing.T) {
 				t.Errorf("unexpected error: %v, awaiting event", err)
 				return
 			}
-			if !strings.HasPrefix(evt.GetHost(), "127.0.0.1:") || evt.GetHost() == listenAddr {
+			if !(strings.HasPrefix(evt.GetHost(), "127.0.0.1:") || evt.GetHost() == listenAddr) {
 				t.Errorf("bad host: %v", evt.GetHost())
 				return
 			}
+
 			// это грязный хак
 			// protobuf добавляет к структуре свои поля, которвые не видны при приведении к строке и при reflect.DeepEqual
 			// поэтому берем не оригинал сообщения, а только нужные значения
@@ -234,7 +235,7 @@ func TestLogging(t *testing.T) {
 				t.Errorf("unexpected error: %v, awaiting event", err)
 				return
 			}
-			if !strings.HasPrefix(evt.GetHost(), "127.0.0.1:") || evt.GetHost() == listenAddr {
+			if !(strings.HasPrefix(evt.GetHost(), "127.0.0.1:") || evt.GetHost() == listenAddr) {
 				t.Errorf("bad host: %v", evt.GetHost())
 				return
 			}
@@ -244,7 +245,6 @@ func TestLogging(t *testing.T) {
 			logData2 = append(logData2, &Event{Consumer: evt.Consumer, Method: evt.Method})
 		}
 	}()
-
 	biz.Check(getConsumerCtx("biz_user"), &Nothing{})
 	time.Sleep(2 * time.Millisecond)
 
@@ -255,6 +255,7 @@ func TestLogging(t *testing.T) {
 	time.Sleep(2 * time.Millisecond)
 
 	wg.Wait()
+	fmt.Println("Вышли из ожидания")
 
 	expectedLogData1 := []*Event{
 		{Consumer: "logger", Method: "/main.Admin/Logging"},
